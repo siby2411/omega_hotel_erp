@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../app/Controllers/HotelController.php';
 
 class Router {
@@ -6,36 +7,33 @@ class Router {
     public function resolve() {
 
         $url = $_GET['url'] ?? 'dashboard';
-        $controller = new HotelController();
+        $c = new HotelController();
 
         switch ($url) {
 
-            case 'dashboard':
-                return $controller->dashboard();
+            case 'dashboard': return $c->dashboard();
 
-            case 'chambres':
-                return $controller->chambres();
+            case 'chambres': return $c->chambres();
+            case 'chambres_create': return $c->chambres_create();
 
-            case 'chambres_create':
-                return $controller->createChambre();
+            case 'clients': return $c->clients();
+            case 'clients_create': return $c->clients_create();
 
-            case 'clients':
-                return $controller->clients();
+            case 'reservations': return $c->reservations();
+            case 'reservations_create': return $c->createReservation();
+            case 'reservations_store': return $c->storeReservation();
 
-            case 'clients_create':
-                return $controller->createClient();
+            case 'factures': return $c->factures();
 
-            case 'reservations':
-                return $controller->reservations();
+            case 'paiements': return $c->paiements();
+            case 'paiements_create': return $c->createPaiement();
 
-            case 'reservations_create':
-                return $controller->createReservation();
+            case 'personnel': return $c->personnel();
+            case 'personnel_create': return $c->createPersonnel();
 
-            case 'reservations_store':
-                return $controller->storeReservation();
+            case 'paie': return $c->paie();
 
-            case 'factures':
-                return $controller->factures();
+            case 'messagerie': return $c->messagerie();
 
             default:
                 http_response_code(404);
