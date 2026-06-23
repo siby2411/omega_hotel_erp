@@ -13,12 +13,26 @@ class HotelController {
 
     private function view($path, $data = []) {
         extract($data);
-        require __DIR__ . "/../../resources/views/$path.php";
+
+        $viewFile = __DIR__ . "/../../resources/views/$path.php";
+        $layoutFile = __DIR__ . "/../../resources/views/layouts/app.php";
+
+        ob_start();
+        require $viewFile;
+        $content = ob_get_clean();
+
+        require $layoutFile;
     }
 
     /* ================= DASHBOARD ================= */
     public function dashboard() {
-        return $this->view('dashboard/index');
+        $stats = [
+            'chambres' => $this->db()->query("SELECT COUNT(*) FROM chambres")->fetchColumn(),
+            'clients' => $this->db()->query("SELECT COUNT(*) FROM clients")->fetchColumn(),
+            'reservations' => $this->db()->query("SELECT COUNT(*) FROM reservations")->fetchColumn(),
+        ];
+
+        return $this->view('dashboard/index', compact('stats'));
     }
 
     /* ================= CHAMBRES ================= */
@@ -51,39 +65,6 @@ class HotelController {
         return $this->view('reservations/create');
     }
 
-    public function storeReservation() {
-
-        $pdo = $this->db();
-
-        $prix = $pdo->prepare("SELECT prix_nuit FROM chambres WHERE id=?");
-        $prix->execute([$_POST['chambre_id']]);
-        $prix = $prix->fetchColumn();
-
-        $d1 = new DateTime($_POST['date_arrivee']);
-        $d2 = new DateTime($_POST['date_depart']);
-        $nuits = $d2->diff($d1)->days;
-
-        $total = $prix * $nuits;
-
-        $stmt = $pdo->prepare("
-            INSERT INTO reservations
-            (client_id, chambre_id, date_arrivee, date_depart, nb_nuits, prix_total)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-
-        $stmt->execute([
-            $_POST['client_id'],
-            $_POST['chambre_id'],
-            $_POST['date_arrivee'],
-            $_POST['date_depart'],
-            $nuits,
-            $total
-        ]);
-
-        header("Location: ?url=reservations");
-        exit;
-    }
-
     /* ================= FACTURES ================= */
     public function factures() {
         $factures = $this->db()->query("SELECT * FROM factures")->fetchAll();
@@ -95,17 +76,13 @@ class HotelController {
         return $this->view('hotel/paiements');
     }
 
-    public function createPaiement() {
-        return $this->view('hotel/paiements_create');
-    }
-
     /* ================= PERSONNEL ================= */
     public function personnel() {
         $staff = $this->db()->query("SELECT * FROM personnel")->fetchAll();
-        return $this->view('hotel/personnel');
+        return $this->view('hotel/personnel', compact('staff'));
     }
 
-    public function createPersonnel() {
+    public function personnel_create() {
         return $this->view('hotel/personnel_create');
     }
 
