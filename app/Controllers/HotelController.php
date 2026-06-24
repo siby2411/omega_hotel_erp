@@ -2,22 +2,16 @@
 
 class HotelController {
 
-    /* ================= DATABASE ================= */
     private function db() {
         return new PDO(
             "mysql:host=127.0.0.1;dbname=hotel_omega;charset=utf8",
             "root",
             "",
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
     }
 
-    /* ================= VIEW ENGINE ================= */
     private function view($path, $data = []) {
-
         extract($data);
 
         $view = __DIR__ . "/../../resources/views/$path.php";
@@ -32,11 +26,11 @@ class HotelController {
 
     /* ================= DASHBOARD ================= */
     public function dashboard() {
-
         $stats = [
             'chambres' => $this->db()->query("SELECT COUNT(*) FROM chambres")->fetchColumn(),
             'clients' => $this->db()->query("SELECT COUNT(*) FROM clients")->fetchColumn(),
             'reservations' => $this->db()->query("SELECT COUNT(*) FROM reservations")->fetchColumn(),
+            'factures' => $this->db()->query("SELECT COUNT(*) FROM factures")->fetchColumn()
         ];
 
         return $this->view('dashboard/index', compact('stats'));
@@ -44,8 +38,8 @@ class HotelController {
 
     /* ================= CHAMBRES ================= */
     public function chambres() {
-        $data = $this->db()->query("SELECT * FROM chambres")->fetchAll();
-        return $this->view('chambres/liste', ['chambres' => $data]);
+        $chambres = $this->db()->query("SELECT * FROM chambres")->fetchAll();
+        return $this->view('chambres/liste', compact('chambres'));
     }
 
     public function chambres_create() {
@@ -54,8 +48,8 @@ class HotelController {
 
     /* ================= CLIENTS ================= */
     public function clients() {
-        $data = $this->db()->query("SELECT * FROM clients")->fetchAll();
-        return $this->view('clients/liste', ['clients' => $data]);
+        $clients = $this->db()->query("SELECT * FROM clients")->fetchAll();
+        return $this->view('clients/liste', compact('clients'));
     }
 
     public function clients_create() {
@@ -64,8 +58,8 @@ class HotelController {
 
     /* ================= RESERVATIONS ================= */
     public function reservations() {
-        $data = $this->db()->query("SELECT * FROM reservations")->fetchAll();
-        return $this->view('reservations/liste', ['reservations' => $data]);
+        $reservations = $this->db()->query("SELECT * FROM reservations")->fetchAll();
+        return $this->view('reservations/liste', compact('reservations'));
     }
 
     public function createReservation() {
@@ -80,9 +74,8 @@ class HotelController {
         $prix->execute([$_POST['chambre_id']]);
         $prix = $prix->fetchColumn();
 
-        $d1 = new DateTime($_POST['date_arrivee']);
-        $d2 = new DateTime($_POST['date_depart']);
-        $nuits = $d2->diff($d1)->days;
+        $nuits = (new DateTime($_POST['date_depart']))
+               ->diff(new DateTime($_POST['date_arrivee']))->days;
 
         $total = $prix * $nuits;
 
@@ -107,8 +100,31 @@ class HotelController {
 
     /* ================= FACTURES ================= */
     public function factures() {
-        $data = $this->db()->query("SELECT * FROM factures")->fetchAll();
-        return $this->view('hotel/factures', ['factures' => $data]);
+        $factures = $this->db()->query("SELECT * FROM factures ORDER BY id DESC")->fetchAll();
+        return $this->view('hotel/factures', compact('factures'));
+    }
+
+    public function factures_create() {
+        $reservations = $this->db()->query("SELECT * FROM reservations")->fetchAll();
+        return $this->view('hotel/factures_create', compact('reservations'));
+    }
+
+    public function factures_store() {
+
+        $stmt = $this->db()->prepare("
+            INSERT INTO factures (reservation_id, client_id, chambre_id, montant_total)
+            VALUES (?, ?, ?, ?)
+        ");
+
+        $stmt->execute([
+            $_POST['reservation_id'],
+            $_POST['client_id'] ?? 0,
+            $_POST['chambre_id'] ?? 0,
+            $_POST['montant_total']
+        ]);
+
+        header("Location: ?url=factures");
+        exit;
     }
 
     /* ================= PAIEMENTS ================= */
@@ -122,8 +138,8 @@ class HotelController {
 
     /* ================= PERSONNEL ================= */
     public function personnel() {
-        $data = $this->db()->query("SELECT * FROM personnel")->fetchAll();
-        return $this->view('hotel/personnel', ['staff' => $data]);
+        $staff = $this->db()->query("SELECT * FROM personnel")->fetchAll();
+        return $this->view('hotel/personnel', compact('staff'));
     }
 
     public function personnel_create() {
@@ -135,15 +151,10 @@ class HotelController {
         return $this->view('hotel/paie');
     }
 
-    /* ================= MESSAGERIE ================= */
-    public function messagerie() {
-        return $this->view('hotel/messagerie');
-    }
-
     /* ================= CHARGES ================= */
     public function charges() {
-        $data = $this->db()->query("SELECT * FROM charges")->fetchAll();
-        return $this->view('hotel/charges', ['charges' => $data]);
+        $charges = $this->db()->query("SELECT * FROM charges")->fetchAll();
+        return $this->view('hotel/charges', compact('charges'));
     }
 
     public function createCharge() {
@@ -169,17 +180,18 @@ class HotelController {
     /* ================= ETATS FINANCIERS ================= */
     public function etatFinancier() {
 
-        $pdo = $this->db();
-
-        $revenus = $pdo->query("SELECT COALESCE(SUM(montant_total),0) FROM factures")->fetchColumn();
-        $charges = $pdo->query("SELECT COALESCE(SUM(montant),0) FROM charges")->fetchColumn();
-
-        $benefice = $revenus - $charges;
+        $revenus = $this->db()->query("SELECT COALESCE(SUM(montant_total),0) FROM factures")->fetchColumn();
+        $charges = $this->db()->query("SELECT COALESCE(SUM(montant),0) FROM charges")->fetchColumn();
 
         return $this->view('hotel/etat_financier', [
             'revenus' => $revenus,
             'charges' => $charges,
-            'benefice' => $benefice
+            'benefice' => $revenus - $charges
         ]);
+    }
+
+    /* ================= MESSAGERIE ================= */
+    public function messagerie() {
+        return $this->view('hotel/messagerie');
     }
 }
