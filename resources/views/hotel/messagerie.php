@@ -1,36 +1,20 @@
-<h2>💬 Messagerie Interne</h2>
+<h2>💬 Messagerie ERP</h2>
 
-<form>
-
-<div class="mb-3">
-<label>Destinataire</label>
-<input class="form-control">
-</div>
-
-<div class="mb-3">
-<label>Message</label>
-<textarea class="form-control"></textarea>
-</div>
-
-<button class="btn btn-primary">
-Envoyer
-</button>
-
+<form method="POST" action="?url=send_message">
+    <input name="receiver_id" class="form-control" placeholder="Destinataire ID">
+    <br>
+    <textarea name="message" class="form-control" placeholder="Message"></textarea>
+    <br>
+    <button class="btn btn-primary">Envoyer</button>
 </form>
 
 <hr>
 
-<h4>Conversations</h4>
+<?php
+$pdo = (new HotelController())->db();
+$msg = $pdo->query("SELECT * FROM messages ORDER BY id DESC")->fetchAll();
 
-<ul class="list-group">
-
-<li class="list-group-item">
-Réception → Chambre 101
-</li>
-
-<li class="list-group-item">
-Client → Réception
-</li>
-
-</ul>
-
+foreach ($msg as $m) {
+    echo "<div class='card p-2 m-2'>💬 {$m['message']}</div>";
+}
+?>

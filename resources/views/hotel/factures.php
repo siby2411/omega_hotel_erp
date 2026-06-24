@@ -1,6 +1,14 @@
-<h2>💳 Factures</h2>
+<h2>🧾 Factures</h2>
 
-<table class="table table-dark table-striped mt-3">
+<!-- ACTION BAR -->
+<div class="mb-3">
+    <a href="?url=factures_create" class="btn btn-success">
+        ➕ Ajouter Facture
+    </a>
+</div>
+
+<!-- TABLE -->
+<table class="table table-dark table-striped">
     <thead>
         <tr>
             <th>ID</th>
@@ -12,18 +20,13 @@
     </thead>
 
     <tbody>
-        <?php
-        $pdo = (new HotelController())->db();
-        $factures = $pdo->query("SELECT * FROM factures ORDER BY id DESC")->fetchAll();
-
-        foreach ($factures as $f):
-        ?>
+        <?php foreach ($factures as $f): ?>
         <tr>
             <td><?= $f['id'] ?></td>
             <td><?= $f['reservation_id'] ?></td>
-            <td><?= number_format($f['montant_total'],2) ?> FCFA</td>
-            <td><?= $f['statut'] ?></td>
-            <td><?= $f['date_creation'] ?></td>
+            <td><?= $f['montant_total'] ?> FCFA</td>
+            <td>Impayée</td>
+            <td><?= $f['created_at'] ?? '' ?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>
