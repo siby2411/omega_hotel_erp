@@ -2,24 +2,25 @@
 
 <form method="POST" action="?url=factures_store">
 
-    <div class="mb-3">
-        <label>Réservation</label>
-        <select name="reservation_id" class="form-control">
-            <?php foreach($reservations as $r): ?>
-                <option value="<?= $r['id'] ?>">
-                    Réservation #<?= $r['id'] ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
+    <label>Réservation (Client + Code + Chambre)</label>
 
-    <div class="mb-3">
-        <label>Montant total</label>
-        <input name="montant_total" class="form-control" required>
-    </div>
+    <select name="reservation_id" class="form-control" required>
+
+        <?php foreach($reservations as $r): ?>
+            <option value="<?= $r['id'] ?>">
+                <?= $r['code_client'] ?> -
+                <?= $r['nom'] ?> <?= $r['prenom'] ?> -
+                Chambre <?= $r['chambre'] ?> -
+                <?= $r['prix_total'] ?> FCFA
+            </option>
+        <?php endforeach; ?>
+
+    </select>
+
+    <br>
 
     <button class="btn btn-success">
-        Créer facture
+        Générer Facture
     </button>
 
 </form>

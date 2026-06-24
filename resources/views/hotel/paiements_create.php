@@ -1,29 +1,26 @@
-<h2>💰 Nouveau Paiement</h2>
+<h2>💳 Nouveau Paiement</h2>
 
-<form>
+<form method="POST" action="?url=paiements_store">
 
-<div class="mb-3">
-<label>Facture</label>
-<input class="form-control">
-</div>
+    <label>Facture</label>
+    <select name="facture_id" class="form-control" required>
+        <?php foreach($factures as $f): ?>
+            <option value="<?= $f['id'] ?>">
+                <?= $f['nom'] ?> <?= $f['prenom'] ?> - <?= $f['montant_total'] ?> FCFA
+            </option>
+        <?php endforeach; ?>
+    </select>
 
-<div class="mb-3">
-<label>Montant</label>
-<input class="form-control">
-</div>
+    <label>Montant</label>
+    <input type="number" name="montant" class="form-control" required>
 
-<div class="mb-3">
-<label>Mode</label>
-<select class="form-control">
-<option>Espèces</option>
-<option>Carte</option>
-<option>Wave</option>
-<option>Orange Money</option>
-</select>
-</div>
+    <label>Mode paiement</label>
+    <select name="mode_paiement" class="form-control">
+        <option>Espèce</option>
+        <option>Carte</option>
+        <option>Virement</option>
+    </select>
 
-<button class="btn btn-success">
-Valider
-</button>
+    <button class="btn btn-primary mt-2">Valider</button>
 
 </form>

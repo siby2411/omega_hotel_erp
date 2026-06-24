@@ -1,62 +1,64 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Personnel</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-body{
-background:linear-gradient(135deg,#0f172a,#1e293b);
-color:white;
-}
-.card{
-background:rgba(255,255,255,.08);
-border:none;
-border-radius:20px;
-}
-</style>
-
-</head>
-<body>
-
-<div class="container mt-5">
-
 <div class="card p-4">
 
-<h2>👨‍💼 Personnel</h2>
+<h2>👨‍💼 Gestion du Personnel</h2>
 
-<a href="?url=personnel_create"
-class="btn btn-success mb-3">
+<div class="mb-3">
+
+<a
+href="?url=personnel_create"
+class="btn btn-success">
+
 ➕ Ajouter Employé
+
 </a>
 
-<table class="table table-dark table-striped">
+</div>
+
+<table class="table table-dark table-striped table-hover">
+
+<thead>
 
 <tr>
 <th>ID</th>
 <th>Nom</th>
-<th>Fonction</th>
-<th>Salaire</th>
+<th>Prénom</th>
+<th>Téléphone</th>
+<th>Poste</th>
+<th>Salaire Base</th>
+<th>Date Embauche</th>
 </tr>
+
+</thead>
+
+<tbody>
 
 <?php foreach($staff as $s): ?>
 
 <tr>
+
 <td><?= $s['id'] ?></td>
-<td><?= $s['nom'] ?? '' ?></td>
-<td><?= $s['fonction'] ?? '' ?></td>
-<td><?= $s['salaire'] ?? 0 ?></td>
+
+<td><?= $s['nom'] ?></td>
+
+<td><?= $s['prenom'] ?></td>
+
+<td><?= $s['telephone'] ?></td>
+
+<td><?= $s['poste'] ?></td>
+
+<td>
+<?= number_format($s['salaire_base'],0,',',' ') ?>
+FCFA
+</td>
+
+<td><?= $s['date_embauche'] ?></td>
+
 </tr>
 
 <?php endforeach; ?>
 
+</tbody>
+
 </table>
 
 </div>
-
-</div>
-
-</body>
-</html>

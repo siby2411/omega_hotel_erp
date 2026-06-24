@@ -1,29 +1,11 @@
-<h2>👤 Nouveau Client</h2>
+<h2>Nouveau Client</h2>
 
-<form>
+<form method="POST" action="?url=clients_store">
 
-<div class="mb-3">
-<label>Nom</label>
-<input class="form-control">
-</div>
+<input name="nom" class="form-control mb-2" placeholder="Nom">
+<input name="prenom" class="form-control mb-2" placeholder="Prénom">
+<input name="email" class="form-control mb-2" placeholder="Email">
+<input name="telephone" class="form-control mb-2" placeholder="Téléphone">
 
-<div class="mb-3">
-<label>Prénom</label>
-<input class="form-control">
-</div>
-
-<div class="mb-3">
-<label>Téléphone</label>
-<input class="form-control">
-</div>
-
-<div class="mb-3">
-<label>Email</label>
-<input class="form-control">
-</div>
-
-<button class="btn btn-success">
-Enregistrer
-</button>
-
+<button class="btn btn-primary">Enregistrer</button>
 </form>

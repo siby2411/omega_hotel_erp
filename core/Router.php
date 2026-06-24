@@ -1,54 +1,73 @@
 <?php
 
-require_once __DIR__ . '/../app/Controllers/HotelController.php';
-
 class Router {
 
     public function resolve() {
 
-        $url = $_GET['url'] ?? 'dashboard';
         $c = new HotelController();
+        $url = $_GET['url'] ?? 'dashboard';
 
         switch ($url) {
 
-            case 'dashboard': return $c->dashboard();
+            /* ================= DASHBOARD ================= */
+            case 'dashboard':
+                return $c->dashboard();
 
-            case 'chambres': return $c->chambres();
-            case 'chambres_create': return $c->chambres_create();
+            /* ================= CLIENTS ================= */
+            case 'clients':
+                return $c->clients();
+            case 'clients_create':
+                return $c->clients_create();
+            case 'clients_store':
+                return $c->clients_store();
 
-            case 'clients': return $c->clients();
-            case 'clients_create': return $c->clients_create();
+            /* ================= CHAMBRES ================= */
+            case 'chambres':
+                return $c->chambres();
+            case 'chambres_create':
+                return $c->chambres_create();
+            case 'chambres_store':
+                return $c->chambres_store();
 
-            case 'reservations': return $c->reservations();
-            case 'reservations_create': return $c->createReservation();
-            case 'reservations_store': return $c->storeReservation();
+            /* ================= RESERVATIONS ================= */
+            case 'reservations':
+                return $c->reservations();
+            case 'reservations_create':
+                return $c->reservations_create();
+            case 'reservations_store':
+                return $c->reservations_store();
 
-            case 'factures': return $c->factures();
-            case 'factures_create': return $c->factures_create();
-            case 'factures_store': return $c->factures_store();
-            case 'facture_pdf': return $c->facture_pdf();
+            /* ================= FACTURES ================= */
+            case 'factures':
+                return $c->factures();
+            case 'factures_create':
+                return $c->factures_create();
+            case 'factures_store':
+                return $c->factures_store();
 
-            case 'paiements': return $c->paiements();
-            case 'paiements_create': return $c->createPaiement();
+            /* ================= PAIEMENTS ================= */
+            case 'paiements':
+                return $c->paiements();
+            case 'paiements_create':
+                return $c->paiements_create();
+            case 'paiements_store':
+                return $c->paiements_store();
 
-            case 'personnel': return $c->personnel();
-            case 'personnel_create': return $c->personnel_create();
+            /* ================= RH ================= */
+            case 'paie':
+                return $c->paie();
+            case 'personnel':
+                return $c->personnel();
 
-            case 'paie': return $c->paie();
-
-            case 'charges': return $c->charges();
-            case 'charges_create': return $c->createCharge();
-            case 'charges_store': return $c->storeCharge();
-
-            case 'etat_financier': return $c->etatFinancier();
-
-            case 'messagerie': return $c->messagerie();
-
-            case 'analytics': return $c->analytics();
+            /* ================= EXTRA ================= */
+            case 'charges':
+                return $c->charges();
+            case 'messagerie':
+                return $c->messagerie();
 
             default:
                 http_response_code(404);
-                echo "404 - PAGE INTROUVABLE";
+                echo "Page introuvable";
         }
     }
 }
