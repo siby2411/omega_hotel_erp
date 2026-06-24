@@ -11,80 +11,40 @@ class Router {
 
         switch ($url) {
 
-            case 'dashboard':
-                return $c->dashboard();
+            case 'dashboard': return $c->dashboard();
 
-            case 'chambres':
-                return $c->chambres();
+            case 'chambres': return $c->chambres();
+            case 'chambres_create': return $c->chambres_create();
 
-            case 'chambres_create':
-                return $c->chambres_create();
+            case 'clients': return $c->clients();
+            case 'clients_create': return $c->clients_create();
 
-            case 'clients':
-                return $c->clients();
+            case 'reservations': return $c->reservations();
+            case 'reservations_create': return $c->createReservation();
+            case 'reservations_store': return $c->storeReservation();
 
-            case 'clients_create':
-                return $c->clients_create();
+            case 'factures': return $c->factures();
+            case 'factures_create': return $c->factures_create();
+            case 'factures_store': return $c->factures_store();
+            case 'facture_pdf': return $c->facture_pdf();
 
-            case 'reservations':
-                return $c->reservations();
+            case 'paiements': return $c->paiements();
+            case 'paiements_create': return $c->createPaiement();
 
-            case 'reservations_create':
-                return $c->createReservation();
+            case 'personnel': return $c->personnel();
+            case 'personnel_create': return $c->personnel_create();
 
-            case 'reservations_store':
-                return $c->storeReservation();
+            case 'paie': return $c->paie();
 
-            case 'factures':
-                return $c->factures();
+            case 'charges': return $c->charges();
+            case 'charges_create': return $c->createCharge();
+            case 'charges_store': return $c->storeCharge();
 
-            case 'factures_create':
-                return $c->factures_create();
+            case 'etat_financier': return $c->etatFinancier();
 
-            case 'factures_store':
-                return $c->factures_store();
+            case 'messagerie': return $c->messagerie();
 
-            case 'paiements':
-                return $c->paiements();
-
-            case 'paiements_create':
-                return $c->createPaiement();
-
-            case 'personnel':
-                return $c->personnel();
-
-            case 'personnel_create':
-                return $c->personnel_create();
-
-            case 'paie':
-                return $c->paie();
-
-            case 'charges':
-                return $c->charges();
-
-            case 'charges_create':
-                return $c->createCharge();
-
-            case 'charges_store':
-                return $c->storeCharge();
-
-            case 'etat_financier':
-                return $c->etatFinancier();
-
-            case 'messagerie':
-                return $c->messagerie();
-
-            case 'analytics':
-                return $c->analytics();
-
-            case 'facture_pdf':
-                return $c->facture_pdf();
-
-            case 'bulletin_pdf':
-                return $c->bulletin_pdf();
-
-            case 'send_message':
-                return $c->send_message();
+            case 'analytics': return $c->analytics();
 
             default:
                 http_response_code(404);

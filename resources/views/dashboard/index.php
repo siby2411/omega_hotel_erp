@@ -1,40 +1,46 @@
-<h1>📊 Tableau de bord OMEGA ERP</h1>
+<h1 class="mb-4">📊 Dashboard OMEGA ERP</h1>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:15px">
+<div class="row g-3">
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h5>🛏 Chambres</h5>
+            <h2><?= $stats['chambres'] ?? 0 ?></h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h5>👥 Clients</h5>
+            <h2><?= $stats['clients'] ?? 0 ?></h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h5>📅 Réservations</h5>
+            <h2><?= $stats['reservations'] ?? 0 ?></h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h5>🧾 Factures</h5>
+            <h2><?= $stats['factures'] ?? 0 ?></h2>
+        </div>
+    </div>
+
+</div>
+
+<hr class="my-4">
 
 <div class="card p-3">
-<h4>🛏 Chambres</h4>
-<h2><?= $stats['chambres'] ?></h2>
-<a href="?url=chambres">Voir</a><br>
-<a href="?url=chambres_create">➕ Ajouter</a>
-</div>
+    <h4>📈 Activité récente</h4>
 
-<div class="card p-3">
-<h4>👥 Clients</h4>
-<h2><?= $stats['clients'] ?></h2>
-<a href="?url=clients">Voir</a><br>
-<a href="?url=clients_create">➕ Ajouter</a>
-</div>
-
-<div class="card p-3">
-<h4>📅 Réservations</h4>
-<h2><?= $stats['reservations'] ?></h2>
-<a href="?url=reservations">Voir</a><br>
-<a href="?url=reservations_create">➕ Ajouter</a>
-</div>
-
-<div class="card p-3">
-<h4>🧾 Factures</h4>
-<h2><?= $stats['factures'] ?? 0 ?></h2>
-<a href="?url=factures">Voir</a><br>
-<a href="?url=factures_create">➕ Ajouter</a>
-</div>
-
-</div>
-
-<hr>
-
-<div class="card p-3 mt-4">
-<h4>📈 Activité récente</h4>
-<p>ERP opérationnel ✔</p>
+    <ul>
+        <li>✔ Système ERP opérationnel</li>
+        <li>✔ Gestion chambres active</li>
+        <li>✔ Gestion clients active</li>
+        <li>✔ Facturation disponible</li>
+    </ul>
 </div>
