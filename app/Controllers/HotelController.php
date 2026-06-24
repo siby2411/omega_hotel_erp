@@ -2,33 +2,25 @@
 
 class HotelController
 {
-    /* ================= DATABASE ================= */
     private function db()
     {
-        static $pdo = null;
-
-        if ($pdo === null) {
-            $pdo = new PDO(
-                "mysql:host=127.0.0.1;dbname=hotel_omega;charset=utf8",
-                "root",
-                "",
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                ]
-            );
-        }
-
-        return $pdo;
+        return new PDO(
+            "mysql:host=localhost;dbname=hotel_omega;charset=utf8",
+            "root",
+            "",
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]
+        );
     }
 
-    /* ================= VIEW WRAPPER (IMPORTANT DESIGN) ================= */
-    private function view($path, $data = [])
+    /* ================= VIEW WRAPPER (IMPORTANT) ================= */
+    public function view($path, $data = [])
     {
         extract($data);
 
         ob_start();
-        require __DIR__ . "/../../resources/views/" . $path . ".php";
+        require __DIR__ . "/../../resources/views/$path.php";
         $content = ob_get_clean();
 
         require __DIR__ . "/../../resources/views/layouts/app.php";
@@ -37,7 +29,69 @@ class HotelController
     /* ================= DASHBOARD ================= */
     public function dashboard()
     {
-        return $this->view('dashboard/index');
+        $pdo = $this->db();
+
+        $stats = [
+            'chambres' => $pdo->query("SELECT COUNT(*) FROM chambres")->fetchColumn(),
+            'clients' => $pdo->query("SELECT COUNT(*) FROM clients")->fetchColumn(),
+            'reservations' => $pdo->query("SELECT COUNT(*) FROM reservations")->fetchColumn(),
+            'factures' => $pdo->query("SELECT COUNT(*) FROM factures")->fetchColumn(),
+        ];
+
+        return $this->view('dashboard/index', $stats);
+    }
+
+    /* ================= CHAMBRES ================= */
+    public function chambres()
+    {
+        $data = $this->db()->query("SELECT * FROM chambres ORDER BY id DESC")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        return $this->view('hotel/chambres', ['chambres' => $data]);
+    }
+
+    public function chambres_create()
+    {
+        return $this->view('hotel/chambres_create');
+    }
+
+    /* ================= CLIENTS ================= */
+    public function clients()
+    {
+        $data = $this->db()->query("SELECT * FROM clients ORDER BY id DESC")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        return $this->view('hotel/clients', ['clients' => $data]);
+    }
+
+    public function clients_create()
+    {
+        return $this->view('hotel/clients_create');
+    }
+
+    /* ================= RESERVATIONS ================= */
+    public function reservations()
+    {
+        $data = $this->db()->query("
+            SELECT r.*, c.nom, ch.numero
+            FROM reservations r
+            JOIN clients c ON c.id = r.client_id
+            JOIN chambres ch ON ch.id = r.chambre_id
+            ORDER BY r.id DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
+
+        return $this->view('hotel/reservations', ['reservations' => $data]);
+    }
+
+    public function reservations_create()
+    {
+        $clients = $this->db()->query("SELECT id, nom, prenom FROM clients")->fetchAll(PDO::FETCH_ASSOC);
+        $chambres = $this->db()->query("SELECT id, numero FROM chambres")->fetchAll(PDO::FETCH_ASSOC);
+
+        return $this->view('hotel/reservations_create', [
+            'clients' => $clients,
+            'chambres' => $chambres
+        ]);
     }
 
     /* ================= FACTURES ================= */
@@ -48,7 +102,7 @@ class HotelController
             FROM factures f
             JOIN clients c ON c.id = f.client_id
             ORDER BY f.id DESC
-        ")->fetchAll();
+        ")->fetchAll(PDO::FETCH_ASSOC);
 
         return $this->view('hotel/factures', ['factures' => $data]);
     }
@@ -56,12 +110,15 @@ class HotelController
     public function factures_create()
     {
         $reservations = $this->db()->query("
-            SELECT r.id, r.prix_total, c.nom, c.prenom, c.code_client
+            SELECT r.id, r.prix_total, c.nom, c.prenom, c.code_client, ch.numero
             FROM reservations r
             JOIN clients c ON c.id = r.client_id
-        ")->fetchAll();
+            JOIN chambres ch ON ch.id = r.chambre_id
+        ")->fetchAll(PDO::FETCH_ASSOC);
 
-        return $this->view('hotel/factures_create', compact('reservations'));
+        return $this->view('hotel/factures_create', [
+            'reservations' => $reservations
+        ]);
     }
 
     public function factures_store()
@@ -75,7 +132,7 @@ class HotelController
         ");
 
         $stmt->execute([$_POST['reservation_id']]);
-        $r = $stmt->fetch();
+        $r = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$r) {
             die("Réservation introuvable");
@@ -98,12 +155,8 @@ class HotelController
     /* ================= PAIEMENTS ================= */
     public function paiements()
     {
-        $data = $this->db()->query("
-            SELECT p.*, f.montant_total
-            FROM paiements p
-            JOIN factures f ON f.id = p.facture_id
-            ORDER BY p.id DESC
-        ")->fetchAll();
+        $data = $this->db()->query("SELECT * FROM paiements ORDER BY id DESC")
+            ->fetchAll(PDO::FETCH_ASSOC);
 
         return $this->view('hotel/paiements', ['paiements' => $data]);
     }
@@ -114,9 +167,11 @@ class HotelController
             SELECT f.id, f.montant_total, c.nom, c.prenom
             FROM factures f
             JOIN clients c ON c.id = f.client_id
-        ")->fetchAll();
+        ")->fetchAll(PDO::FETCH_ASSOC);
 
-        return $this->view('hotel/paiements_create', compact('factures'));
+        return $this->view('hotel/paiements_create', [
+            'factures' => $factures
+        ]);
     }
 
     public function paiements_store()
@@ -135,18 +190,23 @@ class HotelController
     }
 
     /* ================= RH ================= */
-    public function paie()
-    {
-        $data = $this->db()->query("SELECT * FROM paie ORDER BY id DESC")->fetchAll();
-        return $this->view('hotel/paie', ['paie' => $data]);
-    }
-
     public function personnel()
     {
-        $data = $this->db()->query("SELECT * FROM personnel ORDER BY id DESC")->fetchAll();
+        $data = $this->db()->query("SELECT * FROM personnel ORDER BY id DESC")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
         return $this->view('hotel/personnel', ['personnel' => $data]);
     }
 
+    public function paie()
+    {
+        $data = $this->db()->query("SELECT * FROM paie ORDER BY id DESC")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        return $this->view('hotel/paie', ['paie' => $data]);
+    }
+
+    /* ================= FINANCES ================= */
     public function charges()
     {
         return $this->view('hotel/charges');

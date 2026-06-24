@@ -1,26 +1,25 @@
-<h2>🧾 Nouvelle Facture</h2>
+<div class="card p-4">
+    <h4>🧾 Nouvelle Facture</h4>
 
-<form method="POST" action="?url=factures_store">
+    <form method="POST" action="?url=factures_store">
 
-    <label>Réservation (Client + Code + Chambre)</label>
+        <label>Réservation</label>
+        <select name="reservation_id" class="form-control" required>
+            <option value="">-- Choisir une réservation --</option>
 
-    <select name="reservation_id" class="form-control" required>
+            <?php foreach($reservations as $r): ?>
+                <option value="<?= $r['id'] ?>">
+                    <?= $r['nom'] ?> <?= $r['prenom'] ?>
+                    (<?= $r['code_client'] ?>)
+                    - Chambre <?= $r['chambre'] ?>
+                    - <?= $r['prix_total'] ?> FCFA
+                </option>
+            <?php endforeach; ?>
 
-        <?php foreach($reservations as $r): ?>
-            <option value="<?= $r['id'] ?>">
-                <?= $r['code_client'] ?> -
-                <?= $r['nom'] ?> <?= $r['prenom'] ?> -
-                Chambre <?= $r['chambre'] ?> -
-                <?= $r['prix_total'] ?> FCFA
-            </option>
-        <?php endforeach; ?>
+        </select>
 
-    </select>
+        <br>
 
-    <br>
-
-    <button class="btn btn-success">
-        Générer Facture
-    </button>
-
-</form>
+        <button class="btn btn-primary">Créer facture</button>
+    </form>
+</div>
