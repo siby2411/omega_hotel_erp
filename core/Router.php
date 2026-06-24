@@ -4,70 +4,78 @@ class Router {
 
     public function resolve() {
 
-        $c = new HotelController();
         $url = $_GET['url'] ?? 'dashboard';
+
+        $controller = new HotelController();
 
         switch ($url) {
 
             /* ================= DASHBOARD ================= */
             case 'dashboard':
-                return $c->dashboard();
-
-            /* ================= CLIENTS ================= */
-            case 'clients':
-                return $c->clients();
-            case 'clients_create':
-                return $c->clients_create();
-            case 'clients_store':
-                return $c->clients_store();
+            case '':
+                return $controller->dashboard();
 
             /* ================= CHAMBRES ================= */
             case 'chambres':
-                return $c->chambres();
+                return $controller->chambres();
+
             case 'chambres_create':
-                return $c->chambres_create();
-            case 'chambres_store':
-                return $c->chambres_store();
+                return $controller->chambres_create();
+
+            /* ================= CLIENTS ================= */
+            case 'clients':
+                return $controller->clients();
+
+            case 'clients_create':
+                return $controller->clients_create();
 
             /* ================= RESERVATIONS ================= */
             case 'reservations':
-                return $c->reservations();
+                return $controller->reservations();
+
             case 'reservations_create':
-                return $c->reservations_create();
-            case 'reservations_store':
-                return $c->reservations_store();
+                return $controller->reservations_create();
 
             /* ================= FACTURES ================= */
             case 'factures':
-                return $c->factures();
+                return $controller->factures();
+
             case 'factures_create':
-                return $c->factures_create();
+                return $controller->factures_create();
+
             case 'factures_store':
-                return $c->factures_store();
+                return $controller->factures_store();
 
             /* ================= PAIEMENTS ================= */
             case 'paiements':
-                return $c->paiements();
+                return $controller->paiements();
+
             case 'paiements_create':
-                return $c->paiements_create();
+                return $controller->paiements_create();
+
             case 'paiements_store':
-                return $c->paiements_store();
+                return $controller->paiements_store();
 
             /* ================= RH ================= */
             case 'paie':
-                return $c->paie();
+                return $controller->paie();
+
             case 'personnel':
-                return $c->personnel();
+                return $controller->personnel();
 
-            /* ================= EXTRA ================= */
+            /* ================= FINANCES ================= */
             case 'charges':
-                return $c->charges();
-            case 'messagerie':
-                return $c->messagerie();
+                return $controller->charges();
 
+            /* ================= COMMUNICATION ================= */
+            case 'messagerie':
+                return $controller->messagerie();
+
+            /* ================= DEFAULT ================= */
             default:
                 http_response_code(404);
-                echo "Page introuvable";
+                echo "Page introuvable : " . htmlspecialchars($url);
+                return;
         }
     }
 }
