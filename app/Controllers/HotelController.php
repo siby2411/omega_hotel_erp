@@ -1,7 +1,5 @@
 <?php
-
-class HotelController
-{
+class HotelController {
     private function db() {
         return new PDO("mysql:host=localhost;dbname=hotel_omega;charset=utf8", "root", "", [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -66,7 +64,33 @@ class HotelController
         return $this->view('paiements/liste', ['paiements' => $data]);
     }
     public function charges() { return $this->view('hotel/charges'); }
-    public function etat_financier() { return $this->view('hotel/etat_financier'); }
+    
+    public function etat_financier() {
+        $periode = $_GET['periode'] ?? date('Y-m-d');
+        $pdo = $this->db();
+        $stmt = $pdo->prepare("SELECT SUM(montant) as total FROM paiements WHERE DATE(date_paiement) = ?");
+        $stmt->execute([$periode]);
+        $revenus = $stmt->fetch()['total'] ?? 0;
+        return $this->view('hotel/etat_financier', ['revenus' => $revenus, 'periode' => $periode]);
+    }
+
+    // --- MOTEUR DE RECHERCHE DE DISPONIBILITÉ ---
+    public function disponibilite() {
+        $chambres = [];
+        if (isset($_GET['date_arrivee']) && isset($_GET['date_depart'])) {
+            $arrivee = $_GET['date_arrivee'];
+            $depart = $_GET['date_depart'];
+            $sql = "SELECT * FROM chambres WHERE id NOT IN (
+                SELECT chambre_id FROM reservations 
+                WHERE NOT (date_depart <= :arrivee OR date_arrivee >= :depart)
+                AND statut != 'Annulée'
+            )";
+            $stmt = $this->db()->prepare($sql);
+            $stmt->execute(['arrivee' => $arrivee, 'depart' => $depart]);
+            $chambres = $stmt->fetchAll();
+        }
+        return $this->view('hotel/disponibilite', ['chambres' => $chambres]);
+    }
 
     // --- RH ---
     public function personnel() {
