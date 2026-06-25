@@ -17,7 +17,7 @@
                 <hr class="text-secondary">
                 <ul class="nav flex-column">
                     <li class="nav-item"><a href="?url=dashboard" class="nav-link text-white">📊 Dashboard</a></li>
-                    
+
                     <h6 class="text-secondary mt-3 text-uppercase small">🛏️ Hôtel & Clients</h6>
                     <li class="nav-item"><a href="?url=chambres" class="nav-link text-white small">• Liste Chambres</a></li>
                     <li class="nav-item"><a href="?url=chambres_create" class="nav-link text-white small">• + Ajouter Chambre</a></li>
@@ -29,6 +29,7 @@
                     <h6 class="text-secondary mt-3 text-uppercase small">💬 Collaboration</h6>
                     <li class="nav-item"><a href="?url=collab_index" class="nav-link text-white small">• Messagerie</a></li>
                     <li class="nav-item"><a href="?url=collab_planning" class="nav-link text-white small">• Agenda Planning</a></li>
+                    <li class="nav-item"><a href="?url=collab_create_planning" class="nav-link text-white small">• + Ajouter Planning</a></li>
 
                     <h6 class="text-secondary mt-3 text-uppercase small">🍽️ Resto & Stock</h6>
                     <li class="nav-item"><a href="?url=resto_index" class="nav-link text-white small">• Stock Produits</a></li>
