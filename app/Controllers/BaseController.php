@@ -9,9 +9,23 @@ class BaseController {
 
     protected function view($path, $data = []) {
         extract($data);
+        
+        // Construction du chemin absolu depuis la racine
+        $viewFile = __DIR__ . "/../../resources/views/$path.php";
+        $layoutFile = __DIR__ . "/../../resources/views/layouts/app.php";
+
+        if (!file_exists($viewFile)) {
+            die("Erreur : Le fichier de vue '$path.php' est introuvable à : " . $viewFile);
+        }
+
         ob_start();
-        require __DIR__ . "/../../resources/views/$path.php";
+        require $viewFile;
         $content = ob_get_clean();
-        require __DIR__ . "/../../resources/views/layouts/app.php";
+
+        if (!file_exists($layoutFile)) {
+            die("Erreur : Le layout est introuvable à : " . $layoutFile);
+        }
+        
+        require $layoutFile;
     }
 }
