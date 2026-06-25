@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/../app/Controllers/CollaborationController.php';
+require_once __DIR__ . '/../app/Controllers/HotelController.php';
+require_once __DIR__ . '/../app/Controllers/RestoController.php';
+require_once __DIR__ . '/../app/Controllers/PersonnelController.php';
 
 class Router {
     public function resolve() {
@@ -8,20 +11,25 @@ class Router {
         // 1. Gestion des routes RESTO
         if (strpos($url, 'resto_') === 0) {
             $controller = new RestoController();
-            $method = str_replace('resto_', '', $url);
-        } 
-        // 2. Gestion des routes COLLABORATION (Nouveau)
+            $method = $url; // On garde le nom complet pour correspondre aux méthodes
+        }
+        // 2. Gestion des routes COLLABORATION
         elseif (strpos($url, 'collab_') === 0) {
             $controller = new CollaborationController();
-            $method = $url; // On garde tout le nom (ex: collab_index)
-        } 
-        // 3. Gestion des routes HOTEL
+            $method = $url;
+        }
+        // 3. Gestion des routes PERSONNEL
+        elseif (strpos($url, 'personnel_') === 0) {
+            $controller = new PersonnelController();
+            $method = $url;
+        }
+        // 4. Gestion des routes HOTEL (Default)
         else {
             $controller = new HotelController();
             $method = $url;
         }
 
-        // Vérification de l'existence de la méthode
+        // Exécution de la méthode
         if (method_exists($controller, $method)) {
             return $controller->$method();
         } else {
