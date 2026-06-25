@@ -68,6 +68,30 @@ class HotelController {
 
 
 
+// Affiche le formulaire pré-rempli
+public function chambres_edit() {
+    $id = $_GET['id'] ?? null;
+    $stmt = $this->db()->prepare("SELECT * FROM chambres WHERE id = ?");
+    $stmt->execute([$id]);
+    $chambre = $stmt->fetch();
+    
+    return $this->view('hotel/chambres_edit', ['chambre' => $chambre]);
+}
+
+// Enregistre les modifications
+public function chambres_update() {
+    $sql = "UPDATE chambres SET numero = ?, prix = ?, statut = ? WHERE id = ?";
+    $this->db()->prepare($sql)->execute([
+        $_POST['numero'], $_POST['prix'], $_POST['statut'], $_POST['id']
+    ]);
+    header('Location: ?url=chambres');
+}
+
+
+
+
+
+
 
 
 }
