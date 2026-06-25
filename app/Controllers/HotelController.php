@@ -26,10 +26,14 @@ class HotelController {
         return $this->view('dashboard/index', $stats);
     }
 
-    // --- CHAMBRES ---
+    // --- GRILLE SPATIALE DES CHAMBRES ---
     public function chambres() {
-        $data = $this->db()->query("SELECT * FROM chambres ORDER BY id DESC")->fetchAll();
-        return $this->view('chambres/liste', ['chambres' => $data]);
+        $data = $this->db()->query("SELECT * FROM chambres ORDER BY etage DESC, numero ASC")->fetchAll();
+        $chambresParEtage = [];
+        foreach ($data as $c) {
+            $chambresParEtage[$c['etage']][] = $c;
+        }
+        return $this->view('chambres/liste', ['chambresParEtage' => $chambresParEtage]);
     }
     public function chambres_create() { return $this->view('hotel/chambres_create'); }
 
