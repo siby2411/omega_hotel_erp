@@ -1,30 +1,21 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-white">🏨 Plan d'Occupation des Chambres</h2>
+    <h3>🏢 Plan d'Occupation des Chambres</h3>
     <a href="?url=chambres_create" class="btn btn-primary">➕ Ajouter une chambre</a>
 </div>
 
-<?php foreach ($chambresParEtage as $etage => $chambres): ?>
-    <h4 class="text-secondary border-bottom border-secondary pb-2 mb-3">🏢 Étage <?= htmlspecialchars($etage) ?></h4>
-    <div class="row">
-        <?php foreach ($chambres as $c): ?>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-dark text-white shadow-sm p-3 h-100">
-                    <div class="d-flex justify-content-between">
-                        <strong>Chambre <?= htmlspecialchars($c['numero']) ?></strong>
-                        <span class="badge <?= ($c['statut'] == 'Disponible') ? 'bg-success' : 'bg-danger' ?>">
-                            <?= htmlspecialchars($c['statut']) ?>
-                        </span>
-                    </div>
-                    <p class="mb-0 small"><?= htmlspecialchars($c['type']) ?> - <?= number_format($c['prix_nuit'], 0) ?> FCFA</p>
-                    
-                    <div class="mt-3 d-flex gap-2">
-                        <a href="?url=chambres_edit&id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-warning">✏️</a>
-                        <a href="?url=chambres_delete&id=<?= $c['id'] ?>" 
-                           class="btn btn-sm btn-outline-danger" 
-                           onclick="return confirm('Confirmer la suppression de la chambre <?= $c['numero'] ?> ?')">🗑️</a>
-                    </div>
+<div class="row">
+    <?php foreach($chambresParEtage as $chambre): ?>
+    <div class="col-md-3">
+        <div class="card bg-secondary text-white mb-3 shadow">
+            <div class="card-body">
+                <h5 class="card-title">Chambre <?= htmlspecialchars($chambre['numero']) ?></h5>
+                <p class="card-text">Prix : <?= number_format($chambre['prix'], 0, ',', ' ') ?> FCFA</p>
+                <div class="btn-group">
+                    <a href="#" class="btn btn-sm btn-warning">✏️</a>
+                    <a href="#" class="btn btn-sm btn-danger">🗑️</a>
                 </div>
             </div>
-        <?php endforeach; ?>
+        </div>
     </div>
-<?php endforeach; ?>
+    <?php endforeach; ?>
+</div>
