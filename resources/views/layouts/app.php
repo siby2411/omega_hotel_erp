@@ -46,6 +46,26 @@
     <hr>
     <h5>💬 Communication</h5>
     <a href="?url=messagerie">Messagerie</a>
+
+
+
+
+
+<hr>
+<h5>☕ Restauration & Cafétéria</h5>
+<a href="?url=resto_index">📋 Stock & Menu</a>
+<a href="?url=resto_produits_create">➕ Ajouter Produit</a>
+<a href="?url=resto_commandes">🧾 Commandes</a>
+
+
+<hr>
+<h5>📊 États Financiers</h5>
+<a href="?url=resto_etats_financiers">📈 Rapports Resto</a>
+<a href="?url=finance_global">💰 État Global</a>
+
+
+
+
 </div>
 <div class="main"><?= $content ?></div>
 </body>
