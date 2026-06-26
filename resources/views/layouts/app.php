@@ -26,6 +26,10 @@
                     <li class="nav-item"><a href="?url=reservations" class="nav-link text-white small">• Liste Réservations</a></li>
                     <li class="nav-item"><a href="?url=reservations_create" class="nav-link text-white small">• + Nouvelle Réservation</a></li>
 
+                    <h6 class="text-secondary mt-3 text-uppercase small">👥 Personnel</h6>
+                    <li class="nav-item"><a href="?url=personnel_index" class="nav-link text-white small">• Liste Personnel</a></li>
+                    <li class="nav-item"><a href="?url=personnel_create" class="nav-link text-white small">• + Ajouter Employé</a></li>
+
                     <h6 class="text-secondary mt-3 text-uppercase small">💬 Collaboration</h6>
                     <li class="nav-item"><a href="?url=collab_index" class="nav-link text-white small">• Messagerie</a></li>
                     <li class="nav-item"><a href="?url=collab_planning" class="nav-link text-white small">• Agenda Planning</a></li>

@@ -1,38 +1,32 @@
-<?php
-require_once 'BaseController.php';
+     
 
-class CollaborationController extends BaseController {
 
-    // --- MESSAGERIE ---
+     <?php                         require_once 'BaseController.php';                                                        class CollaborationController extends BaseController {
+
+    // --- MESSAGERIE ---     
+
+
+ 
     public function collab_index() {
-        $monCode = $_SESSION['user_code'] ?? 'DIMO767001';
+        $personnel = $this->db()->query("SELECT code_employe, nom, prenom FROM personnel")->fetchAll();
 
-        $sql = "SELECT m.*, e.nom as exp_nom
+        // Utilisation de LEFT JOIN et COALESCE pour éviter de perdre les messages
+        $sql = "SELECT m.*, COALESCE(e.nom, 'Système/Inconnu') as exp_nom 
                 FROM messages m
-                JOIN personnel e ON m.expediteur_code = e.code_employe
-                WHERE m.destinataire_code = ? OR m.expediteur_code = ?
-                ORDER BY date_envoi DESC";
+                LEFT JOIN personnel e ON m.expediteur_code = e.code_employe
+                ORDER BY m.date_envoi DESC";
+        
+        $messages = $this->db()->query($sql)->fetchAll();
 
-        $messages = $this->db()->prepare($sql);
-        $messages->execute([$monCode, $monCode]);
-
-        return $this->view('hotel/messagerie', ['messages' => $messages->fetchAll()]);
+        return $this->view('hotel/messagerie', [
+            'messages' => $messages,
+            'personnel' => $personnel
+        ]);
     }
 
-    public function envoyer_message() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $expediteur = $_POST['expediteur'] ?? 'ADMIN';
-            $sql = "INSERT INTO messages (expediteur_code, destinataire_code, objet, contenu) VALUES (?, ?, ?, ?)";
-            $this->db()->prepare($sql)->execute([
-                $expediteur,
-                $_POST['destinataire'],
-                $_POST['objet'],
-                $_POST['contenu']
-            ]);
-            header('Location: ?url=collab_index');
-            exit;
-        }
-    }
+
+
+
 
     // --- PLANNING & AGENDA ---
     public function collab_planning() {
@@ -44,6 +38,8 @@ class CollaborationController extends BaseController {
         return $this->view('hotel/planning', ['planning' => $data]);
     }
 
+
+
     public function collab_save_planning() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sql = "INSERT INTO planning_personnel (employe_code, date_debut, type_rotation) VALUES (?, ?, ?)";
@@ -54,6 +50,8 @@ class CollaborationController extends BaseController {
             exit;
         }
     }
+    
+    
 
     // --- AJOUT AU PLANNING ---
     public function collab_create_planning() {
@@ -67,4 +65,50 @@ class CollaborationController extends BaseController {
         return $this->view('hotel/caisse', ['caisse' => $caisse]);
     }
 
-} // <--- Cette accolade ferme correctement la classe CollaborationController
+
+public function collab_envoyer_message() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Vérification stricte de la session
+            if (!isset($_SESSION['user_code'])) {
+                die("Erreur : Vous devez être connecté pour envoyer un message.");
+            }
+
+            $sql = "INSERT INTO messages (expediteur_code, destinataire_code, objet, contenu) VALUES (?, ?, ?, ?)";
+            $this->db()->prepare($sql)->execute([
+                $_SESSION['user_code'],
+                $_POST['destinataire'],
+                $_POST['objet'],
+                $_POST['contenu']
+            ]);
+            
+            header('Location: ?url=collab_index');
+            exit;
+        }
+    }
+    
+  
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

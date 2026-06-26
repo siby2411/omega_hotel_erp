@@ -3,15 +3,21 @@ require_once __DIR__ . '/../app/Controllers/CollaborationController.php';
 require_once __DIR__ . '/../app/Controllers/HotelController.php';
 require_once __DIR__ . '/../app/Controllers/RestoController.php';
 require_once __DIR__ . '/../app/Controllers/PersonnelController.php';
+require_once __DIR__ . '/../app/Controllers/LoginController.php';
 
 class Router {
     public function resolve() {
         $url = $_GET['url'] ?? 'dashboard';
 
+        // 0. Gestion spécifique du Login
+        if ($url === 'login') {
+            $controller = new LoginController();
+            $method = 'login';
+        }
         // 1. Gestion des routes RESTO
-        if (strpos($url, 'resto_') === 0) {
+        elseif (strpos($url, 'resto_') === 0) {
             $controller = new RestoController();
-            $method = $url; // On garde le nom complet pour correspondre aux méthodes
+            $method = $url;
         }
         // 2. Gestion des routes COLLABORATION
         elseif (strpos($url, 'collab_') === 0) {
