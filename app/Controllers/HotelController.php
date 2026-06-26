@@ -17,13 +17,25 @@ class HotelController {
         require __DIR__ . "/../../resources/views/layouts/app.php";
     }
 
-    // --- DASHBOARD ---
-    public function dashboard() { return $this->view('dashboard/index'); }
+    // --- DASHBOARD CORRIGÉ ---
+    public function dashboard() {
+        $chambres = $this->db()->query("SELECT COUNT(*) FROM chambres")->fetchColumn();
+        $clients = $this->db()->query("SELECT COUNT(*) FROM clients")->fetchColumn();
+        $reservations = $this->db()->query("SELECT COUNT(*) FROM reservations")->fetchColumn();
+        $factures = $this->db()->query("SELECT COUNT(*) FROM factures")->fetchColumn();
+
+        return $this->view('dashboard/index', [
+            'chambres' => $chambres,
+            'clients' => $clients,
+            'reservations' => $reservations,
+            'factures' => $factures
+        ]);
+    }
 
     // --- CHAMBRES ---
-    public function chambres() { 
+    public function chambres() {
         $data = $this->db()->query("SELECT * FROM chambres ORDER BY etage DESC, numero ASC")->fetchAll();
-        return $this->view('chambres/liste', ['chambresParEtage' => $data]); 
+        return $this->view('chambres/liste', ['chambresParEtage' => $data]);
     }
     public function chambres_create() { return $this->view('hotel/chambres_create'); }
 
@@ -47,54 +59,36 @@ class HotelController {
     // --- RH & COMMUNICATION ---
     public function paie() { return $this->view('hotel/paie'); }
     public function messagerie() { return $this->view('hotel/messagerie'); }
-    
+
     // --- DISPONIBILITÉ ---
     public function disponibilite() { return $this->view('hotel/disponibilite'); }
 
-
-
-
-    // --- COMPLÉMENT FIN ET RH ---
-    public function personnel() { 
+    // --- PERSONNEL ---
+    public function personnel() {
         $data = $this->db()->query("SELECT * FROM personnel")->fetchAll();
-        return $this->view('hotel/personnel', ['personnel' => $data]); 
+        return $this->view('hotel/personnel', ['personnel' => $data]);
     }
 
-    public function finance_global() { 
-        // Exemple de calcul global pour l'ERP
+    public function finance_global() {
         $data = $this->db()->query("SELECT SUM(montant) as total_revenu FROM paiements")->fetch();
-        return $this->view('hotel/finance_global', ['total' => $data['total_revenu']]); 
+        return $this->view('hotel/finance_global', ['total' => $data['total_revenu']]);
     }
 
+    // --- MODIFICATION CHAMBRES ---
+    public function chambres_edit() {
+        $id = $_GET['id'] ?? null;
+        $stmt = $this->db()->prepare("SELECT * FROM chambres WHERE id = ?");
+        $stmt->execute([$id]);
+        $chambre = $stmt->fetch();
+        return $this->view('hotel/chambres_edit', ['chambre' => $chambre]);
+    }
 
-
-// Affiche le formulaire pré-rempli
-public function chambres_edit() {
-    $id = $_GET['id'] ?? null;
-    $stmt = $this->db()->prepare("SELECT * FROM chambres WHERE id = ?");
-    $stmt->execute([$id]);
-    $chambre = $stmt->fetch();
-    
-    return $this->view('hotel/chambres_edit', ['chambre' => $chambre]);
+    public function chambres_update() {
+        $sql = "UPDATE chambres SET numero = ?, prix = ?, statut = ? WHERE id = ?";
+        $this->db()->prepare($sql)->execute([
+            $_POST['numero'], $_POST['prix'], $_POST['statut'], $_POST['id']
+        ]);
+        header('Location: ?url=chambres');
+        exit;
+    }
 }
-
-// Enregistre les modifications
-public function chambres_update() {
-    $sql = "UPDATE chambres SET numero = ?, prix = ?, statut = ? WHERE id = ?";
-    $this->db()->prepare($sql)->execute([
-        $_POST['numero'], $_POST['prix'], $_POST['statut'], $_POST['id']
-    ]);
-    header('Location: ?url=chambres');
-}
-
-
-
-
-
-
-
-
-}
-
-
-

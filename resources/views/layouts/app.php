@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>OMEGA ERP - Gestion Complète</title>
+    <title>OMEGA INFORMATIQUE Consulting  ERP - Gestion Hoteliere </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .nav-link { transition: 0.3s; }
